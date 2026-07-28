@@ -95,7 +95,7 @@ class ScreenSaverSettingsMenu(settings_menu.SettingsMenu):
             selected = max(0, min(selected, len(widgets) - 1))
             if dirty:
                 self._render_layout_preview(ScreenSaver, widgets, selected)
-                #Display.clear("")
+                Display.clear("")
                 dirty = False
 
             if not Controller.get_input(timeout=0.2):
