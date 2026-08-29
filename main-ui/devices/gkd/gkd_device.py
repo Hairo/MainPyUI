@@ -54,19 +54,19 @@ class GKDDevice(DeviceCommon):
             f.write(str(self.map_backlight_from_10_to_full_255(self.system_config.backlight)))
 
     def _set_contrast_to_config(self):
-        ProcessRunner.run(["modetest", "-M", "rockchip", "-a", "-w",
+        ProcessRunner.run(["modetest", "-M", "rockchip", "-a", "-w", 
                                      "179:contrast:"+str(self.system_config.contrast * 5)])
 
     def _set_saturation_to_config(self):
-        ProcessRunner.run(["modetest", "-M", "rockchip", "-a", "-w",
+        ProcessRunner.run(["modetest", "-M", "rockchip", "-a", "-w", 
                                      "179:saturation:"+str(self.system_config.saturation * 5)])
 
     def _set_brightness_to_config(self):
-        ProcessRunner.run(["modetest", "-M", "rockchip", "-a", "-w",
+        ProcessRunner.run(["modetest", "-M", "rockchip", "-a", "-w", 
                                      "179:brightness:"+str(self.system_config.brightness * 5)])
 
     def _set_hue_to_config(self):
-        ProcessRunner.run(["modetest", "-M", "rockchip", "-a", "-w",
+        ProcessRunner.run(["modetest", "-M", "rockchip", "-a", "-w", 
                                      "179:hue:"+str(self.system_config.hue * 5)])
 
     def get_volume(self):
@@ -162,15 +162,15 @@ class GKDDevice(DeviceCommon):
                 return "No USB adapter"
 
             try:
+                wlan_addrs = []
                 all_addrs = psutil.net_if_addrs()
+
                 for k in all_addrs.keys():
                     if k.startswith("wlan"):
                         wlan_addrs = all_addrs.get(k)
                         break
 
                 eth_addrs = all_addrs.get("eth0")
-
-                wlan_addrs = wlan_addrs if wlan_addrs else []
                 eth_addrs = eth_addrs if eth_addrs else []
 
                 addrs = wlan_addrs + eth_addrs
@@ -204,11 +204,10 @@ class GKDDevice(DeviceCommon):
 
     @throttle.limit_refresh(5)
     def get_charge_status(self):
-        #Probably need to find the power and not just usb
-        with open("/sys/class/power_supply/usb/online", "r") as f:
-            ac_online = int(f.read().strip())
+        with open("/sys/class/power_supply/battery/status", "r") as f:
+            status = f.read().strip()
 
-        if(ac_online):
+        if(status == "Charging"):
            return ChargeStatus.CHARGING
         else:
             return ChargeStatus.DISCONNECTED
